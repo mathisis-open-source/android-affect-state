@@ -22,7 +22,7 @@ import android.provider.Settings.Secure;
  */
 
 public class Settings {
-    private String android_id = "12";//Secure.getString(getContext().getContentResolver(), Secure.ANDROID_ID);
+    private String android_id = "";
     private Context thiscontext;
     private String gyroscope_sensorial_data="",touch_sensorial_data="",accelerometer_sensorial_data="";
     private Integer count_sensorial_length=0;
@@ -32,7 +32,9 @@ public class Settings {
         return thiscontext;
     }
     public void setContext(Context co) {
+
         this.thiscontext = co;
+        this.android_id = Secure.getString(thiscontext.getContentResolver(), Secure.ANDROID_ID);
     }
 
     private static final Settings holder = new Settings();
@@ -92,7 +94,7 @@ public class Settings {
     }
     public void sendSensorialData() throws Exception {
             String json = "{\n" +
-                    "\"device_id\": \"dasdas2\",\n" +
+                    "\"device_id\": \""+android_id+"\",\n" +
                     "\"timestamp\": \""+getMatchedDate()+"\",\n" +
                     "\"features\": [[" +gyroscope_sensorial_data+"],"+
                     "["+accelerometer_sensorial_data+"]\n" +
@@ -100,6 +102,7 @@ public class Settings {
                     "}";
             gyroscope_sensorial_data = "";
             accelerometer_sensorial_data = "";
+            System.out.println(json);
             SenderTask poster = new SenderTask(json);
             System.out.println(poster.execute());
     }
