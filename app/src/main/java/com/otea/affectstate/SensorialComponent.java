@@ -9,6 +9,11 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.IBinder;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
 public class SensorialComponent extends Service {
     private boolean isRunning;
     private SensorManager mSensorManager;
@@ -43,7 +48,12 @@ public class SensorialComponent extends Service {
                             if(isRunning==true) {
 
                                 count_acc++;
-                                accelerometer_string = "{\"time\":\""+Settings.getInstance().getMatchedDate()+"\",\"x\":"+event.values[0]+",\"y\":" + event.values[1] + ",\"z\":" + event.values[2] + "}";
+                                TimeZone tz = TimeZone.getTimeZone("UTC");
+                                DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSSS'Z'"); // Quoted "Z" to indicate UTC, no timezone offset
+                                df.setTimeZone(tz);
+                                String nowAsISO = df.format(new Date());
+                                System.out.println(nowAsISO);
+                                accelerometer_string = "{\"time\":\""+nowAsISO+"\",\"x\":"+event.values[0]+",\"y\":" + event.values[1] + ",\"z\":" + event.values[2] + "}";
                                 try {
                                     postAccelerometerThing(accelerometer_string);
                                 } catch (Exception e) {
@@ -55,7 +65,13 @@ public class SensorialComponent extends Service {
                             if(isRunning==true) {
 
                                 count_gyr++;
-                                gyroscope_string = "{\"time\":\""+Settings.getInstance().getMatchedDate()+"\",\"x\":"+event.values[0]+",\"y\":"+event.values[1]+",\"z\":"+event.values[2]+"}";
+                                TimeZone tz = TimeZone.getTimeZone("UTC");
+                                DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSSS'Z'"); // Quoted "Z" to indicate UTC, no timezone offset
+                                df.setTimeZone(tz);
+
+                                String nowAsISO = df.format(new Date());
+                                System.out.println(nowAsISO);
+                                gyroscope_string = "{\"time\":\""+nowAsISO+"\",\"x\":"+event.values[0]+",\"y\":"+event.values[1]+",\"z\":"+event.values[2]+"}";
                                 try {
                                     postGyroscopeThing(gyroscope_string);
                                 } catch (Exception e) {

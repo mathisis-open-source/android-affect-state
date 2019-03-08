@@ -61,7 +61,7 @@ public class Settings {
 //        return dateFormatted;
 
         TimeZone tz = TimeZone.getTimeZone("UTC");
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'"); // Quoted "Z" to indicate UTC, no timezone offset
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSSS'Z'"); // Quoted "Z" to indicate UTC, no timezone offset
         df.setTimeZone(tz);
         String nowAsISO = df.format(new Date());
         return nowAsISO;
@@ -101,7 +101,7 @@ public class Settings {
     public void handleSensorialData() throws Exception {
 
         count_sensorial_length++;
-        if (count_sensorial_length > 10) {
+        if (count_sensorial_length > 1000) {
             sendSensorialData();
             getCurrentStatus();
             count_sensorial_length = 0;
@@ -109,13 +109,19 @@ public class Settings {
     }
 
     public void sendSensorialData() throws Exception {
+        TimeZone tz = TimeZone.getTimeZone("UTC");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSSS'Z'"); // Quoted "Z" to indicate UTC, no timezone offset
+        df.setTimeZone(tz);
+        String nowAsISO = df.format(new Date());
+
         String json = "{\n" +
                 "\"device_id\": \"" + android_id + "\",\n" +
-                "\"timestamp\": \"" + getMatchedDate() + "\",\n" +
+                "\"timestamp\": \"" + nowAsISO + "\",\n" +
                 "\"features\": [[" + gyroscope_sensorial_data + "]," +
                 "[" + accelerometer_sensorial_data + "]\n" +
                 "]\n" +
                 "}";
+        System.out.println(nowAsISO);
         gyroscope_sensorial_data = "";
         accelerometer_sensorial_data = "";
         SenderTask poster = new SenderTask(json);
